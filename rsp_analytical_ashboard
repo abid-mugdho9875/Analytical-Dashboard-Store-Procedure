@@ -1,1 +1,1073 @@
+create or replace procedure rsp_dashboard_data(pbranch_id  in nvarchar2,
+                                               ptrans_date in nvarchar2,
+                                               preport_id  in nvarchar2,
+                                               presult_set out sys_refcursor) is
+
+  v_count number;
+  version_info constant varchar2(1000) := 'TFS-DATE : 2025-09-28 BY : Md. Abdul Malek';
+
+begin
+
+  --Total cash in hand
+  if preport_id = 1001 then
+    open presult_set for
+      select null as sl_no,
+             '1001' as report_id,
+             to_char(h.trans_dt, 'YYYY-MM-DD') as trans_date,
+             zb.zone_code,
+             zb.zone_name,
+             h.gl_branch_id as branch_id,
+             mis_lib.fxn_get_br_name(h.gl_branch_id) as branch_name,
+             h.gl_acc_sl,
+             h.gl_acc_nm,
+             h.closing_balance_lcy
+        from cor_glmaster_hist h, zone_branch_info zb
+       where h.gl_branch_id = zb.branch_code
+         and (h.gl_branch_id = pbranch_id or
+             mis_lib.fxn_get_br_zone_code(h.gl_branch_id) = pbranch_id or
+             pbranch_id is null)
+         and h.trans_dt = to_date(ptrans_date, 'dd/mm/yyyy')
+         and h.serial = 0
+         and h.gl_acc_sl = '90300000003'
+       order by h.gl_branch_id;
+  end if;
+
+  --Total income
+  if preport_id = 1002 then
+    open presult_set for
+      select null as sl_no,
+             '1002' as report_id,
+             to_char(h.trans_dt, 'YYYY-MM-DD') as trans_date,
+             zb.zone_code,
+             zb.zone_name,
+             h.gl_branch_id as branch_id,
+             mis_lib.fxn_get_br_name(h.gl_branch_id) as branch_name,
+             h.gl_acc_sl,
+             h.gl_acc_nm,
+             h.closing_balance_lcy
+        from cor_glmaster_hist h, zone_branch_info zb
+       where h.gl_branch_id = zb.branch_code
+         and (h.gl_branch_id = pbranch_id or
+             mis_lib.fxn_get_br_zone_code(h.gl_branch_id) = pbranch_id or
+             pbranch_id is null)
+         and h.trans_dt = to_date(ptrans_date, 'dd/mm/yyyy')
+         and h.serial = 0
+         and h.gl_acc_sl = '90400000001'
+       order by h.gl_branch_id;
+  end if;
+
+  --Total expense
+  if preport_id = 1003 then
+    open presult_set for
+      select null as sl_no,
+             '1003' as report_id,
+             to_char(h.trans_dt, 'YYYY-MM-DD') as trans_date,
+             zb.zone_code,
+             zb.zone_name,
+             h.gl_branch_id as branch_id,
+             mis_lib.fxn_get_br_name(h.gl_branch_id) as branch_name,
+             h.gl_acc_sl,
+             h.gl_acc_nm,
+             h.closing_balance_lcy
+        from cor_glmaster_hist h, zone_branch_info zb
+       where h.gl_branch_id = zb.branch_code
+         and (h.gl_branch_id = pbranch_id or
+             mis_lib.fxn_get_br_zone_code(h.gl_branch_id) = pbranch_id or
+             pbranch_id is null)
+         and h.trans_dt = to_date(ptrans_date, 'dd/mm/yyyy')
+         and h.serial = 0
+         and h.gl_acc_sl = '90200000001'
+       order by h.gl_branch_id;
+  end if;
+
+  --Total due from other bank
+  if preport_id = 1004 then
+    open presult_set for
+      select null as sl_no,
+             '1004' as report_id,
+             to_char(h.trans_dt, 'YYYY-MM-DD') as trans_date,
+             zb.zone_code,
+             zb.zone_name,
+             h.gl_branch_id as branch_id,
+             mis_lib.fxn_get_br_name(h.gl_branch_id) as branch_name,
+             h.gl_acc_sl,
+             h.gl_acc_nm,
+             h.closing_balance_lcy
+        from cor_glmaster_hist h, zone_branch_info zb
+       where h.gl_branch_id = zb.branch_code
+         and (h.gl_branch_id = pbranch_id or
+             mis_lib.fxn_get_br_zone_code(h.gl_branch_id) = pbranch_id or
+             pbranch_id is null)
+         and h.trans_dt = to_date(ptrans_date, 'dd/mm/yyyy')
+         and h.serial = 0
+         and h.gl_acc_sl = '90200000013'
+       order by h.gl_branch_id;
+  end if;
+
+  --Total ibt balance
+  if preport_id = 1005 then
+    open presult_set for
+      select null as sl_no,
+             '1005' as report_id,
+             to_char(h.trans_dt, 'YYYY-MM-DD') as trans_date,
+             zb.zone_code,
+             zb.zone_name,
+             h.gl_branch_id as branch_id,
+             mis_lib.fxn_get_br_name(h.gl_branch_id) as branch_name,
+             h.gl_acc_sl,
+             h.gl_acc_nm,
+             (case
+               when h.closing_balance_lcy < 0 then
+                h.closing_balance_lcy
+               else
+                0
+             end) as credit_balance,
+             (case
+               when h.closing_balance_lcy < 0 then
+                0
+               else
+                h.closing_balance_lcy
+             end) as debit_balance,
+             h.closing_balance_lcy
+        from cor_glmaster_hist h, zone_branch_info zb
+       where h.gl_branch_id = zb.branch_code
+         and (h.gl_branch_id = pbranch_id or
+             mis_lib.fxn_get_br_zone_code(h.gl_branch_id) = pbranch_id or
+             pbranch_id is null)
+         and h.trans_dt = to_date(ptrans_date, 'dd/mm/yyyy')
+         and h.serial = 0
+         and h.gl_acc_sl = '90100000286'
+       order by h.gl_branch_id;
+  end if;
+
+  --Total suspense balance
+  if preport_id = 1006 then
+    open presult_set for
+      select null as sl_no,
+             '1006' as report_id,
+             to_char(h.trans_dt, 'YYYY-MM-DD') as trans_date,
+             zb.zone_code,
+             zb.zone_name,
+             h.gl_branch_id as branch_id,
+             mis_lib.fxn_get_br_name(h.gl_branch_id) as branch_name,
+             h.gl_acc_sl,
+             h.gl_acc_nm,
+             h.closing_balance_lcy
+        from cor_glmaster_hist h, zone_branch_info zb
+       where h.gl_branch_id = zb.branch_code
+         and (h.gl_branch_id = pbranch_id or
+             mis_lib.fxn_get_br_zone_code(h.gl_branch_id) = pbranch_id or
+             pbranch_id is null)
+         and h.trans_dt = to_date(ptrans_date, 'dd/mm/yyyy')
+         and h.serial = 0
+         and h.gl_acc_sl in ('90300000290', '90300000303', '90300000311')
+       order by h.gl_branch_id;
+  end if;
+
+  --Total loan outstanding
+  if preport_id = 1007 then
+    open presult_set for
+      select null as sl_no,
+             '1007' as report_id,
+             to_char(h.trans_date, 'YYYY-MM-DD') as trans_date,
+             zb.zone_code,
+             zb.zone_name,
+             h.branch_id as branch_id,
+             mis_lib.fxn_get_br_name(h.branch_id) as branch_name,
+             count(h.account_no) as no_of_acc,
+             sum(case
+                   when h.lon_finance_sector_id = '08' then
+                    (nvl(h.closing_os_bal_prn_lcy, 0) + nvl(h.closing_os_bal_chg_lcy, 0))
+                   when h.lon_finance_sector_id != '08' and
+                        nvl(h.closing_os_bal_lcy, 0) != 0 then
+                    h.closing_os_bal_lcy
+                   else
+                    0
+                 end) closing_balance_lcy
+        from cor_lon_ac_master_hist h, zone_branch_info zb
+       where h.branch_id = zb.branch_code
+         and (h.branch_id = pbranch_id or
+             mis_lib.fxn_get_br_zone_code(h.branch_id) = pbranch_id or
+             pbranch_id is null)
+         and h.trans_date = to_date(ptrans_date, 'dd/mm/yyyy')
+         and h.account_status_id in ('01', '02', '03')
+       group by zb.zone_code, zb.zone_name, h.branch_id, h.trans_date
+       order by h.branch_id;
+  end if;
+
+  --Total cl loan outstanding
+  if preport_id = 1008 then
+    open presult_set for
+      select null as sl_no,
+             '1008' as report_id,
+             to_char(h.trans_date, 'YYYY-MM-DD') as trans_date,
+             zb.zone_code,
+             zb.zone_name,
+             h.branch_id as branch_id,
+             mis_lib.fxn_get_br_name(h.branch_id) as branch_name,
+             count(h.account_no) as no_of_acc,
+             (sum(case
+                    when r.access_type_id = '04' then
+                     mis_cb.fxn_get_lease_amt(h.branch_id,
+                                              h.account_no,
+                                              '1',
+                                              to_date(ptrans_date, 'dd/mm/yyyy'),
+                                              'C')
+                    when t.lon_finance_sector_id = '08' then
+                     nvl(h.closing_os_bal_prn_ccy, 0) + nvl(h.closing_os_bal_chg_ccy, 0)
+                    when t.lon_finance_sector_id <> '08' and nvl(h.closing_os_bal_ccy, 0) < 0 then
+                     h.closing_os_bal_ccy
+                    else
+                     0
+                  end)) closing_balance_lcy
+        from cor_lon_ac_master      t,
+             cor_lon_ac_master_hist h,
+             cor_lon_prod_rule      r,
+             zone_branch_info       zb
+       where t.branch_id = h.branch_id
+         and t.account_no = h.account_no
+         and h.trans_date = to_date(ptrans_date, 'dd/mm/yyyy')
+         and (h.branch_id = pbranch_id or
+             mis_lib.fxn_get_br_zone_code(h.branch_id) = pbranch_id or
+             pbranch_id is null)
+         and h.account_status_id in ('01', '02', '03')
+         and t.product_id = r.product_id
+         and t.service_type_id = r.service_type_id
+         and (h.closing_os_bal_ccy < 0 or
+             (h.closing_os_bal_ccy >= 0 and
+             (nvl(h.int_suspense, 0) + nvl(h.int_suspense_penal, 0)) > 0) or
+             r.access_type_id = '04' and
+             mis_cb.fxn_get_lease_amt(t.branch_id,
+                                       t.account_no,
+                                       '1',
+                                       to_date(ptrans_date, 'dd/mm/yyyy'),
+                                       'C') <> 0)
+         and h.lon_finance_sector_id != '08'
+         and decode(nvl(h.lon_status_qj_flag, 0),
+                    1,
+                    nvl(h.lon_status_qj_id, '00'),
+                    nvl(h.lon_status_ob_id, '00')) not in
+             ('00', '01', '02', '05')
+         and t.branch_id = zb.branch_code
+       group by zb.zone_code, zb.zone_name, h.branch_id, h.trans_date
+       order by h.branch_id;
+  end if;
+
+  --No cost deposit
+  if preport_id = 1009 then
+    open presult_set for
+      select null as sl_no,
+             '1009' as report_id,
+             to_char(x.trans_date, 'YYYY-MM-DD') as trans_date,
+             zb.zone_code,
+             zb.zone_name,
+             x.branch_id as branch_id,
+             mis_lib.fxn_get_br_name(x.branch_id) as branch_name,
+             count(x.no_of_ac) as "Deposit A/C Count",
+             sum(x.closing_balance_lcy) as "Deposit Total Balance"
+        from ( --
+              select h.branch_id,
+                      h.trans_date,
+                      h.account_number as no_of_ac,
+                      nvl(h.current_balance_lcy, 0) as closing_balance_lcy
+                from rtl_demand_ac_mast t, rtl_demand_ac_mast_hist h
+               where t.branch_id = h.branch_id
+                 and t.account_number = h.account_number
+                 and h.acc_status != 'C'
+                 and h.trans_date = to_date(ptrans_date, 'dd/mm/yyyy')
+                 and t.prod_int_tot_cr = 0
+              union all
+              select h.branch_id,
+                     h.trans_date,
+                     h.account_number as no_of_ac,
+                     nvl(h.current_balance_lcy, 0) as closing_balance_lcy
+                from rtl_time_ac_mast t, rtl_time_ac_mast_hist h
+               where t.branch_id = h.branch_id
+                 and t.account_number = h.account_number
+                 and h.acc_status != 'C'
+                 and h.trans_date = to_date(ptrans_date, 'dd/mm/yyyy')
+                 and t.prod_int_tot_cr = 0
+              union all
+              select h.branch_id,
+                     h.trans_date,
+                     h.account_number as no_of_ac,
+                     nvl(h.current_balance_lcy, 0) as closing_balance_lcy
+                from rtl_scheme_ac_mast t, rtl_scheme_ac_mast_hist h
+               where t.branch_id = h.branch_id
+                 and t.account_number = h.account_number
+                 and h.acc_status != 'C'
+                 and h.trans_date = to_date(ptrans_date, 'dd/mm/yyyy')
+                 and t.int_rate_tot = 0
+              
+              ) x,
+             zone_branch_info zb
+       where x.branch_id = zb.branch_code
+         and (x.branch_id = pbranch_id or
+             mis_lib.fxn_get_br_zone_code(x.branch_id) = pbranch_id or
+             pbranch_id is null)
+      
+       group by zb.zone_code, zb.zone_name, x.branch_id, x.trans_date
+       order by x.branch_id;
+  
+  end if;
+
+  --Low cost deposit
+  if preport_id = 1010 then
+    open presult_set for
+      select null as sl_no,
+             '1010' as report_id,
+             to_char(x.trans_date, 'YYYY-MM-DD') as trans_date,
+             zb.zone_code,
+             zb.zone_name,
+             x.branch_id as branch_id,
+             mis_lib.fxn_get_br_name(x.branch_id) as branch_name,
+             count(x.no_of_ac) as "Deposit A/C Count",
+             sum(x.closing_balance_lcy) as "Deposit Total Balance"
+        from (
+              
+              select h.branch_id,
+                      h.trans_date,
+                      (h.account_number) as no_of_ac,
+                      nvl(h.current_balance_lcy, 0) as closing_balance_lcy
+                from rtl_demand_ac_mast t, rtl_demand_ac_mast_hist h
+               where t.branch_id = h.branch_id
+                 and t.account_number = h.account_number
+                 and h.acc_status != 'C'
+                 and h.trans_date = to_date(ptrans_date, 'dd/mm/yyyy')
+                 and t.prod_int_tot_cr != 0
+              
+              ) x,
+             zone_branch_info zb
+      
+       where x.branch_id = zb.branch_code
+         and (x.branch_id = pbranch_id or
+             mis_lib.fxn_get_br_zone_code(x.branch_id) = pbranch_id or
+             pbranch_id is null)
+      
+       group by zb.zone_code, zb.zone_name, x.branch_id, x.trans_date
+       order by x.branch_id;
+  end if;
+
+  --High cost deposit
+  if preport_id = 1011 then
+    open presult_set for
+      select null as sl_no,
+             '1011' as report_id,
+             to_char(x.trans_date, 'YYYY-MM-DD') as trans_date,
+             zb.zone_code,
+             zb.zone_name,
+             x.branch_id as branch_id,
+             mis_lib.fxn_get_br_name(x.branch_id) as branch_name,
+             count(x.no_of_ac) as "Deposit A/C Count",
+             sum(x.closing_balance_lcy) as "Deposit Total Balance"
+        from (select h.branch_id,
+                     h.trans_date,
+                     (h.account_number) as no_of_ac,
+                     nvl(h.current_balance_lcy, 0) as closing_balance_lcy
+                from rtl_time_ac_mast t, rtl_time_ac_mast_hist h
+               where t.branch_id = h.branch_id
+                 and t.account_number = h.account_number
+                 and h.acc_status != 'C'
+                 and h.trans_date = to_date(ptrans_date, 'dd/mm/yyyy')
+                 and t.prod_int_tot_cr != 0
+              
+              union all
+              
+              select h.branch_id,
+                     h.trans_date,
+                     (h.account_number) as no_of_ac,
+                     nvl(h.current_balance_lcy, 0) as closing_balance_lcy
+                from rtl_scheme_ac_mast t, rtl_scheme_ac_mast_hist h
+               where t.branch_id = h.branch_id
+                 and t.account_number = h.account_number
+                 and h.acc_status != 'C'
+                 and h.trans_date = to_date(ptrans_date, 'dd/mm/yyyy')
+                 and t.int_rate_tot != 0
+              
+              ) x,
+             zone_branch_info zb
+      
+       where x.branch_id = zb.branch_code
+         and (x.branch_id = pbranch_id or
+             mis_lib.fxn_get_br_zone_code(x.branch_id) = pbranch_id or
+             pbranch_id is null)
+      
+       group by zb.zone_code, zb.zone_name, x.branch_id, x.trans_date
+       order by x.branch_id;
+  
+  end if;
+
+  /**********plub b
+  
+    --inward
+    if preport_id = 1012 then
+      open presult_set for
+        select null as sl_no,
+               '1012' as report_id,
+               to_char(t.trans_dt, 'YYYY-MM-DD') as trans_date,
+               (case
+                 when h.cl_branch_id in ('5300', '7101', '1001') then
+                  h.cl_branch_id
+                 else
+                  to_char(mis_lib.fxn_get_br_zone_code(h.cl_branch_id))
+               end) as zone_code,
+               (case
+                 when h.cl_branch_id in ('5300', '7101', '1001') then
+                  mis_lib.fxn_get_br_name(h.cl_branch_id)
+                 else
+                  mis_lib.fxn_get_br_zone_nm(mis_lib.fxn_get_br_zone_code(h.cl_branch_id))
+               end) as zone_name,
+               h.cl_branch_id as branch_id,
+               mis_lib.fxn_get_br_name(h.cl_branch_id) as branch_name,
+               count(t.tracer_no) inward_no,
+               sum(t.amount_ccy) inward_amount
+          from plugb.trans_cr_hist t, plugb.trans_cl_hist h
+         where (h.cl_branch_id = pbranch_id or mis_lib.fxn_get_br_zone_code(h.cl_branch_id) =
+               pbranch_id or pbranch_id is null)
+           and t.trans_dt = h.trans_dt
+           and t.tracer_no = h.tracer_no
+           and substr(h.cl_routing_no, 1, 3) = '180'
+              -- and t.return_flag = '0'
+           and t.last_action in ('EXE', 'RTN')
+           and t.auth_status_id = 'A'
+           and t.trans_dt = to_date(ptrans_date, 'dd/mm/yyyy')
+         group by h.cl_branch_id, t.trans_dt
+         order by h.cl_branch_id;
+    end if;
+  
+    --outward
+    if preport_id = 1013 then
+      open presult_set for
+        select null as sl_no,
+               '1013' as report_id,
+               to_char(t.trans_dt, 'YYYY-MM-DD') as trans_date,
+               (case
+                 when t.cl_branch_id in ('5300', '7101', '1001') then
+                  t.cl_branch_id
+                 else
+                  to_char(mis_lib.fxn_get_br_zone_code(t.cl_branch_id))
+               end) as zone_code,
+               (case
+                 when t.cl_branch_id in ('5300', '7101', '1001') then
+                  mis_lib.fxn_get_br_name(t.cl_branch_id)
+                 else
+                  mis_lib.fxn_get_br_zone_nm(mis_lib.fxn_get_br_zone_code(t.cl_branch_id))
+               end) as zone_name,
+               t.cl_branch_id as branch_id,
+               to_char(t.branch_name) as branch_name,
+               count(t.client) outward_no,
+               sum(t.amount_lcy) as outward_amount
+          from plugb.vw_rpt_trans_client_pmt_hist t
+          left join plugb.param_fin_inst_branch b
+            on t.cbs_branch_id = b.branch_id
+           and b.fin_inst_id is null
+         where (t.cl_branch_id = pbranch_id or mis_lib.fxn_get_br_zone_code(t.cl_branch_id) =
+               pbranch_id or pbranch_id is null)
+           and (t.trans_dt = to_date(ptrans_date, 'dd/mm/yyyy') or
+               ptrans_date is null)
+           and upper(t.client) = 'PAYEE'
+           and t.cbs_transaction = 'Done'
+         group by t.cl_branch_id, t.branch_name, t.trans_dt;
+    end if;
+  
+  ****/
+
+  --Deposit new ac open
+  if preport_id = 1014 then
+    open presult_set for
+      select null as sl_no,
+             '1014' as report_id,
+             to_char(x.acc_open_dt, 'YYYY-MM-DD') as trans_date,
+             zb.zone_code,
+             zb.zone_name,
+             x.branch_id as branch_id,
+             mis_lib.fxn_get_br_name(x.branch_id) as branch_name,
+             count(x.no_of_ac) as "Deposit A/C Count",
+             sum(x.closing_balance_lcy) as "Deposit Total Balance"
+        from ( --
+              select h.branch_id,
+                      h.acc_open_dt,
+                      h.account_number as no_of_ac,
+                      nvl((mis_lib.fxn_get_acc_close_bala_lcy(h.branch_id,
+                                                              h.account_number,
+                                                              ptrans_date)),
+                          0) as closing_balance_lcy
+                from rtl_demand_ac_mast h
+               where h.acc_status != 'C'
+                 and h.acc_open_dt between to_date(ptrans_date, 'dd/mm/yyyy') and
+                     to_date(ptrans_date, 'dd/mm/yyyy')
+              
+              union all
+              select h.branch_id,
+                     h.acc_open_dt,
+                     h.account_number as no_of_ac,
+                     nvl((mis_lib.fxn_get_acc_close_bala_lcy(h.branch_id,
+                                                             h.account_number,
+                                                             ptrans_date)),
+                         0) as closing_balance_lcy
+                from rtl_time_ac_mast h
+               where h.acc_status != 'C'
+                 and h.acc_open_dt between to_date(ptrans_date, 'dd/mm/yyyy') and
+                     to_date(ptrans_date, 'dd/mm/yyyy')
+              
+              union all
+              select h.branch_id,
+                     h.acc_open_dt,
+                     h.account_number as no_of_ac,
+                     nvl((mis_lib.fxn_get_acc_close_bala_lcy(h.branch_id,
+                                                             h.account_number,
+                                                             ptrans_date)),
+                         0) as closing_balance_lcy
+                from rtl_scheme_ac_mast h
+               where h.acc_status != 'C'
+                 and h.acc_open_dt between to_date(ptrans_date, 'dd/mm/yyyy') and
+                     to_date(ptrans_date, 'dd/mm/yyyy') --
+              ) x,
+             zone_branch_info zb
+      
+       where x.branch_id = zb.branch_code
+         and (x.branch_id = pbranch_id or
+             mis_lib.fxn_get_br_zone_code(x.branch_id) = pbranch_id or
+             pbranch_id is null)
+      
+       group by zb.zone_code, zb.zone_name, x.branch_id, x.acc_open_dt
+      
+       order by x.branch_id;
+  
+  end if;
+
+  --Loan new ac open
+  if preport_id = 1015 then
+    open presult_set for
+      select null as sl_no,
+             '1015' as report_id,
+             to_char(x.account_open_dt, 'YYYY-MM-DD') as trans_date,
+             zb.zone_code,
+             zb.zone_name,
+             x.branch_id as branch_id,
+             mis_lib.fxn_get_br_name(x.branch_id) as branch_name,
+             count(x.no_of_ac) as "Loan A/C Count",
+             (sum(x.closing_balance_lcy)) as "Loan Total OS"
+        from (select h.branch_id,
+                     h.account_open_dt,
+                     h.account_no as no_of_ac,
+                     nvl((mis_lib.fxn_get_acc_close_bala_lcy(h.branch_id,
+                                                             h.account_no,
+                                                             ptrans_date)),
+                         0) as closing_balance_lcy
+                from cor_lon_ac_master h
+               where h.account_status_id in ('01', '02', '03')
+                 and h.account_open_dt between
+                     to_date(ptrans_date, 'dd/mm/yyyy') and
+                     to_date(ptrans_date, 'dd/mm/yyyy') --
+              ) x,
+             zone_branch_info zb
+      
+       where x.branch_id = zb.branch_code
+         and (x.branch_id = pbranch_id or
+             mis_lib.fxn_get_br_zone_code(x.branch_id) = pbranch_id or
+             pbranch_id is null)
+      
+       group by zb.zone_code, zb.zone_name, x.branch_id, x.account_open_dt
+       order by x.branch_id;
+  
+  end if;
+
+  --basic information centrally not stored
+  /*
+  if preport_id = 1016 then
+    open presult_set for
+      select null as sl_no,
+             '1016' as report_id,
+             to_char(to_date(ptrans_date, 'dd/mm/yyyy'), 'YYYY-MM-DD') as trans_date,
+             (case
+               when l.branch_id in ('5300', '7101', '1001') then
+                l.branch_id
+               else
+                mis_lib.fxn_get_br_zone_code(l.branch_id)
+             end) as zone_code,
+             (case
+               when l.branch_id in ('5300', '7101', '1001') then
+                mis_lib.fxn_get_br_name(l.branch_id)
+               else
+                mis_lib.fxn_get_br_zone_nm(mis_lib.fxn_get_br_zone_code(l.branch_id))
+             end) as zone_name,
+             l.branch_id as branch_id,
+             mis_lib.fxn_get_br_name(l.branch_id) as branch_name,
+             sum(l.no_of_dep_11) as depositor_centrally_not_stored,
+             sum(l.no_of_lon_12) as borrowers_centrally_not_stored
+        from table(mis_basic_info.get_basic_info_summ(pbranch_id => null,
+                                                              ptrans_dt  => ptrans_date)) l
+  
+       where (l.branch_id = pbranch_id or mis_lib.fxn_get_br_zone_code(l.branch_id) =
+             pbranch_id or pbranch_id is null)
+  
+       group by l.branch_id
+       order by l.branch_id;
+  end if;
+  */
+
+  ----basic information centrally stored
+  /* if preport_id = 1017 then
+    open presult_set for
+      select null as sl_no,
+             '1017' as report_id,
+             to_char(to_date(ptrans_date, 'dd/mm/yyyy'), 'YYYY-MM-DD') as trans_date,
+             (case
+               when l.branch_id in ('5300', '7101', '1001') then
+                l.branch_id
+               else
+                mis_lib.fxn_get_br_zone_code(l.branch_id)
+             end) as zone_code,
+             (case
+               when l.branch_id in ('5300', '7101', '1001') then
+                mis_lib.fxn_get_br_name(l.branch_id)
+               else
+                mis_lib.fxn_get_br_zone_nm(mis_lib.fxn_get_br_zone_code(l.branch_id))
+             end) as zone_name,
+             l.branch_id as branch_id,
+             mis_lib.fxn_get_br_name(l.branch_id) as branch_name,
+             sum(l.no_of_dep_9) as depositor_centrally_stored,
+             sum(l.no_of_lon_10) as borrowers_centrally_stored
+        from table(mis_basic_info.get_basic_info_summ(pbranch_id => null,
+                                                      ptrans_dt  => ptrans_date)) l
+  
+       where (l.branch_id = pbranch_id or
+             mis_lib.fxn_get_br_zone_code(l.branch_id) = pbranch_id or
+             pbranch_id is null)
+  
+       group by l.branch_id
+       order by l.branch_id;
+  end if;*/
+
+  --Recovery
+  if preport_id = '1018' then
+    open presult_set for
+      select null as sl_no,
+             '1018' as report_id,
+             to_char(to_date(ptrans_date, 'dd/mm/yyyy'), 'YYYY-MM-DD') as trans_date,
+             (case
+               when l.branch_id in ('5300', '7101', '1001') then
+                l.branch_id
+               else
+                mis_lib.fxn_get_br_zone_code(l.branch_id)
+             end) as zone_code,
+             (case
+               when l.branch_id in ('5300', '7101', '1001') then
+                mis_lib.fxn_get_br_name(l.branch_id)
+               else
+                mis_lib.fxn_get_br_zone_nm(mis_lib.fxn_get_br_zone_code(l.branch_id))
+             end) as zone_name,
+             l.branch_id as branch_id,
+             mis_lib.fxn_get_br_name(l.branch_id) as branch_name,
+             sum(case
+                   when l.cl_status in ('00', '05') then
+                    l.rec_amount
+                   else
+                    0
+                 end) as amt_uc,
+             
+             sum(case
+                   when l.cl_status = '06' then
+                    l.rec_amount
+                   else
+                    0
+                 end) as amt_ss,
+             sum(case
+                   when l.cl_status = '07' then
+                    l.rec_amount
+                   else
+                    0
+                 end) as amt_df,
+             sum(case
+                   when l.cl_status = '08' then
+                    l.rec_amount
+                   else
+                    0
+                 end) as amt_bl
+        from branch_home_bank b,
+             sys_branch_office_day_log bl,
+             table(mis_recovery_process.get_lon_recovery(pbranch_id => b.branch_id,
+                                                         pdate_from => ptrans_date,
+                                                         pdate_to   => ptrans_date)) l
+       where b.branch_id = bl.branch_id
+         and b.branch_id = l.branch_id
+         and (l.branch_id = pbranch_id or
+             mis_lib.fxn_get_br_zone_code(l.branch_id) = pbranch_id or
+             pbranch_id is null)
+         and b.branch_type_id != 1
+       group by l.branch_id
+       order by l.branch_id;
+  end if;
+
+  --mobile app user signup
+  /*  if preport_id = 1019 then
+    open presult_set for
+      select null as sl_no,
+             '1019' as report_id,
+             to_char(trunc(t.create_dt), 'YYYY-MM-DD') as trans_date,
+             (case
+               when t.branch_id in ('5300', '7101', '1001') then
+                t.branch_id
+               else
+                mis_lib.fxn_get_br_zone_code(t.branch_id)
+             end) as zone_code,
+             (case
+               when t.branch_id in ('5300', '7101', '1001') then
+                t.branch_nm
+               else
+                mis_lib.fxn_get_br_zone_nm(mis_lib.fxn_get_br_zone_code(t.branch_id))
+             end) as zone_name,
+             t.branch_id,
+             t.branch_nm as branch_name,
+             count(decode(p.user_status_active_flag, 1, t.customer_id)) as active_user,
+             count(decode(p.user_status_active_flag, 0, t.customer_id)) as inactive_user,
+             count(t.customer_id) as total_user
+        from cloudnet.reg_cust_signup t, cloudnet.reg_cust_user_profile p
+       where t.customer_id = p.customer_id
+         and t.status = '1'
+            --and t.isauthorized = '1'
+         and (t.branch_id = pbranch_id or mis_lib.fxn_get_br_zone_code(t.branch_id) =
+             pbranch_id or pbranch_id is null)
+         and trunc(t.create_dt) = to_date(ptrans_date, 'dd/mm/yyyy')
+       group by t.branch_id, t.branch_nm, trunc(t.create_dt)
+       order by t.branch_id;
+  end if;*/
+
+  --mobile app utility transaction
+  /* if preport_id = 1020 then
+      open presult_set for
+        select null as sl_no,
+               '1020' as report_id,
+               to_char(x.trans_dt, 'YYYY-MM-DD') as trans_date,
+               (case
+                 when x.branch_id in ('5300', '7101', '1001') then
+                  x.branch_id
+                 else
+                  mis_lib.fxn_get_br_zone_code(x.branch_id)
+               end) as zone_code,
+               (case
+                 when x.branch_id in ('5300', '7101', '1001') then
+                   mis_lib.fxn_get_br_name(x.branch_id)
+                 else
+                  mis_lib.fxn_get_br_zone_nm(mis_lib.fxn_get_br_zone_code(x.branch_id))
+               end) as zone_name,
+               x.branch_id as branch_id,
+               mis_lib.fxn_get_br_name(x.branch_id) as branch_name,
+               x.service_name,
+               count(*) as no_of_tr,
+               sum(x.amount) as amount
+          from ((select tm.branch_id,
+                        p.pv_name as service_name,
+                        trunc(tm.make_dt) as trans_dt,
+                        (tm.pvt_amount) as amount
+                   from cor_usb_trans tm, cor_usb_param p
+                  where tm.pv_code = p.pv_code
+                    and tm.auth_status_id = 'A'
+  
+                 union all
+  
+                 select t.branch_id,
+                        p.pv_name as service_name,
+                        trunc(t.make_dt) as trans_dt,
+                        (t.pvt_amount) as amount
+                   from cor_usb_trans_hist t, cor_usb_param p
+                  where t.pv_code = p.pv_code
+                    and t.auth_status_id = 'A')
+  
+                union all
+  
+                (select t.from_branch_id as branch_id,
+                        t.transfer_for as service_name,
+                        trunc(t.transaction_date) as trans_dt,
+                        (t.amount) as amount
+                   from cloudnet.reg_transfer_fund t
+                  where t.transfer_type in ('3', '24', '26')
+  
+                 union all
+  
+                 select t.from_branch_id as branch_id,
+                        t.transfer_for as service_name,
+                        trunc(t.transaction_date) as trans_dt,
+                        (t.amount) as amount
+                   from cloudnet.reg_transfer_fund t
+                  where t.transfer_type = '25'
+                    and t.transaction_id is not null)) x
+         where x.trans_dt = to_date(ptrans_date, 'dd/mm/yyyy')
+           and (x.branch_id = pbranch_id or mis_lib.fxn_get_br_zone_code(x.branch_id) =
+               pbranch_id or pbranch_id is null)
+         group by x.branch_id, x.service_name, x.trans_dt
+         order by x.branch_id, x.service_name;
+    end if;
+  */
+
+  -- Foreign remittance transaction
+  if preport_id = 1023 then
+    open presult_set for
+      select null as sl_no,
+             '1023' as report_id,
+             to_char(m.trans_dt, 'YYYY-MM-DD') as trans_date,
+             zb.zone_code,
+             zb.zone_name,
+             m.branch_id as branch_id,
+             mis_lib.fxn_get_br_name(m.branch_id) as branch_name,
+             m.gl_acc_sl,
+             mis_lib.fxn_get_gl_ac_name(m.branch_id, m.gl_acc_sl, 'C') as gl_acc_nm,
+             count(*) as no_of_tr,
+             sum(m.amount_ccy) as amount
+        from cor_trans_gl_hist m, zone_branch_info zb
+       where m.branch_id = zb.branch_code
+         and m.branch_id != '1001'
+         and m.dr_cr = 'D'
+         and m.trans_dt = to_date(ptrans_date, 'dd/mm/yyyy')
+         and m.gl_acc_sl in
+             (select c.gl_acc_sl
+                from cor_glchart c
+               where c.gl_acc_sl in ('90300000323',
+                                     '90300000377',
+                                     '90300000378',
+                                     '90300000337',
+                                     '90300000338',
+                                     '90300000339',
+                                     '90300000340'))
+         and (m.branch_id = pbranch_id or
+             mis_lib.fxn_get_br_zone_code(m.branch_id) = pbranch_id or
+             pbranch_id is null)
+       group by zb.zone_code,
+                zb.zone_name,
+                m.branch_id,
+                m.gl_acc_sl,
+                m.trans_dt
+       order by m.branch_id;
+  end if;
+
+  ---Security amount not available account list
+  if preport_id = 1024 then
+    open presult_set for
+      select null as sl_no,
+             '1024' as report_id,
+             to_char(to_date(ptrans_date, 'dd/mm/yyyy'), 'YYYY-MM-DD') as trans_date,
+             x.zone_code,
+             x.zone_name,
+             x.branch_id,
+             x.branch_name,
+             count(x.account_no) as no_of_acc
+        from (select zb.zone_code,
+                     zb.zone_name,
+                     p.branch_id,
+                     mis_lib.fxn_get_br_name(m.branch_id) as branch_name,
+                     m.product_id,
+                     mis_lib.fxn_get_prod_nm(m.product_id, '1', 'C') as product_nm,
+                     m.account_no
+                from cor_lon_col_pool_share    p,
+                     cor_lon_col_document_file f,
+                     cor_lon_ac_master         m,
+                     zone_branch_info          zb
+               where f.branch_id = p.branch_id
+                 and f.collateral_id = p.collateral_id
+                 and p.branch_id = m.branch_id
+                 and p.commitment_id = m.commitment_id
+                 and m.branch_id = zb.branch_code
+                 and m.account_status_id != '05'
+                 and m.lon_finance_sector_id != '08'
+                 and m.lon_nature_sector_id in ('01', '03')
+                 and (((f.eligible_security_value * p.pool_share_ratio) / 100) = 0)
+                 and (f.collateral_type_id = '01')
+              
+              union all
+              
+              select zb.zone_code,
+                     zb.zone_name,
+                     d.branch_id,
+                     mis_lib.fxn_get_br_name(d.branch_id) as branch_name,
+                     d.product_id,
+                     mis_lib.fxn_get_prod_nm(d.product_id, '1', 'C') as product_nm,
+                     d.account_no
+                from cor_lon_ac_master d, zone_branch_info zb
+               where d.branch_id = zb.branch_code
+                 and d.lon_nature_sector_id in ('01', '03')
+                 and d.account_status_id != '05'
+                 and d.lon_finance_sector_id != '08'
+                 and (d.branch_id, d.account_no) not in
+                     (select v.branch_id, v.account_no
+                        from (select p.branch_id, m.account_no
+                                from cor_lon_col_pool_share    p,
+                                     cor_lon_col_document_file f,
+                                     cor_lon_ac_master         m
+                               where f.branch_id = p.branch_id
+                                 and f.collateral_id = p.collateral_id
+                                 and p.branch_id = m.branch_id
+                                 and p.commitment_id = m.commitment_id
+                                 and f.collateral_type_id = '01'
+                                 and m.lon_nature_sector_id in ('01', '03')) v)) x
+       where (x.branch_id = pbranch_id or
+             mis_lib.fxn_get_br_zone_code(x.branch_id) = pbranch_id or
+             pbranch_id is null)
+       group by x.zone_code, x.zone_name, x.branch_id, x.branch_name
+       order by x.branch_id;
+  
+  end if;
+
+  ---ekyc account information
+  /* if preport_id = 1025 then
+      open presult_set for
+        select null as sl_no,
+               '1025' as report_id,
+               to_char(to_date(ptrans_date, 'dd/mm/yyyy'), 'yyyy-mm-dd') as trans_date,
+               x.zone_code,
+               x.zone_name,
+               x.branch_id,
+               x.branch_name,
+               count(x.account_no) as no_of_acc,
+               sum(x.current_balance_lcy) as closing_balance_lcy
+  
+          from (select zb.zone_code,
+                       zb.zone_name,
+                       t.branch_id,
+                       zb.branch_name,
+                       t.account_no,
+                       mis_lib.fxn_get_ac_name(t.branch_id, t.account_no, 'C') as account_name,
+                       d.acc_open_dt,
+                       (case
+                         when t.depositpermonth > 100000 then
+                          'Regular'
+                         else
+                          'Simplefied'
+                       end) as ekyc_type,
+                       (case
+                         when upper(t.makeby) = 'IBU' then
+                          'Internet Banking'
+                         when upper(t.makeby) = 'MOB' then
+                          'Mobile App'
+                         when upper(t.makeby) = 'ASSISTED' then
+                          'By Branch'
+                         else
+                          'Others'
+                       end) as make_by_channel,
+                       (case
+                         when upper(t.makeby) = 'IBU' and t.authby is not null then
+                          'Internet Banking'
+                         when upper(t.makeby) = 'IBU' and t.authby is null then
+                          'By Branch'
+                         when upper(t.makeby) = 'MOB' and t.authby is not null then
+                          'Mobile App'
+                         when upper(t.makeby) = 'MOB' and t.authby is null then
+                          'By Branch'
+                         when upper(t.authby) = 'ASSISTED' and t.authby is not null then
+                          'By Branch'
+                         else
+                          'By Branch'
+                       end) as auth_by_channel,
+                       d.current_balance_lcy
+  
+                  from verifid3.customer_profiles t,
+                       rtl_demand_ac_mast d,
+                       zone_branch_info           zb
+                 where t.account_no = d.account_number
+                   and t.branch_id = d.branch_id
+                   and t.branch_id = zb.branch_code
+                   and t.account_no is not null
+                   and (pbranch_id is null or t.branch_id = pbranch_id or
+                       zb.zone_code = pbranch_id)
+                   and (d.acc_open_dt <= to_date(ptrans_date, 'dd/mm/yyyy'))) x
+         group by x.zone_code, x.zone_name, x.branch_id, x.branch_name;
+    end if;
+  */
+
+  ---Total amount crops
+  if preport_id = 1026 then
+    open presult_set for
+      select null as sl_no,
+             '1026' as report_id,
+             to_char(to_date(ptrans_date, 'dd/mm/yyyy'), 'yyyy-mm-dd') as trans_date,
+             zb.zone_code,
+             zb.zone_name,
+             t.branch_id,
+             zb.branch_name,
+             count(t.account_no) as no_of_acc,
+             sum(case
+                   when h.lon_finance_sector_id = '08' then
+                    (nvl(h.closing_os_bal_prn_lcy, 0) + nvl(h.closing_os_bal_chg_lcy, 0))
+                   when h.lon_finance_sector_id != '08' and
+                        nvl(h.closing_os_bal_lcy, 0) != 0 then
+                    h.closing_os_bal_lcy
+                   else
+                    0
+                 end) as closing_balance_lcy
+        from cor_lon_ac_master      t,
+             cor_lon_ac_master_hist h,
+             zone_branch_info       zb
+       where t.branch_id = h.branch_id
+         and t.account_no = h.account_no
+         and t.branch_id = zb.branch_code
+         and h.trans_date = to_date(ptrans_date, 'dd/mm/yyyy')
+         and h.account_status_id in ('01', '02', '03')
+         and decode(h.lon_status_qj_flag,
+                    1,
+                    nvl(h.lon_status_qj_id, '00'),
+                    nvl(h.lon_status_ob_id, '00')) not in
+             ('06', '07', '08')
+         and h.lon_nature_sector_id = '05'
+       group by zb.zone_code, zb.zone_name, t.branch_id, zb.branch_name;
+  end if;
+
+  ---Total amount others
+  if preport_id = 1027 then
+    open presult_set for
+      select null as sl_no,
+             '1027' as report_id,
+             to_char(to_date(ptrans_date, 'dd/mm/yyyy'), 'yyyy-mm-dd') as trans_date,
+             zb.zone_code,
+             zb.zone_name,
+             t.branch_id,
+             zb.branch_name,
+             count(t.account_no) as no_of_acc,
+             sum(case
+                   when h.lon_finance_sector_id = '08' then
+                    (nvl(h.closing_os_bal_prn_lcy, 0) + nvl(h.closing_os_bal_chg_lcy, 0))
+                   when h.lon_finance_sector_id != '08' and
+                        nvl(h.closing_os_bal_lcy, 0) != 0 then
+                    h.closing_os_bal_lcy
+                   else
+                    0
+                 end) as closing_balance_lcy
+        from cor_lon_ac_master      t,
+             cor_lon_ac_master_hist h,
+             zone_branch_info       zb
+       where t.branch_id = h.branch_id
+         and t.account_no = h.account_no
+         and t.branch_id = zb.branch_code
+         and h.trans_date = to_date(ptrans_date, 'dd/mm/yyyy')
+         and h.account_status_id in ('01', '02', '03')
+         and decode(h.lon_status_qj_flag,
+                    1,
+                    nvl(h.lon_status_qj_id, '00'),
+                    nvl(h.lon_status_ob_id, '00')) not in
+             ('06', '07', '08')
+         and h.lon_nature_sector_id != '05'
+       group by zb.zone_code, zb.zone_name, t.branch_id, zb.branch_name;
+  end if;
+
+  ---Amount of loan provision
+  if preport_id = '1028' then
+    open presult_set for
+      select null as sl_no,
+             '1028' as report_id,
+             to_char(to_date(ptrans_date, 'dd/mm/yyyy'), 'yyyy-mm-dd') as trans_date,
+             zb.zone_code,
+             zb.zone_name,
+             zb.branch_code as branch_id,
+             zb.branch_name,
+             sum(nvl(cl.req_prov, 0)) as amount
+        from zone_branch_info zb
+       inner join mis_cl_master cl
+          on zb.branch_code = cl.branch_id
+         and cl.trans_date = to_date(ptrans_date, 'dd/mm/yyyy')
+       where zb.office_org_type_id != 1
+       group by zb.zone_code, zb.zone_name, zb.branch_code, zb.branch_name
+       order by zb.branch_code;
+  
+  end if;
+
+end;
 
